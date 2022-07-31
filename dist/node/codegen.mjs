@@ -46,7 +46,7 @@ export function codegen(archetype, reference = "fragment", namespace = "_", mayA
             if (tmpl) {
                 diagnostic(archetype);
                 body.push("const ", textFn, " = function () {", tmpl.decl, "return(", tmpl.expr, ") };\n");
-                body.push(deferredAlias, ".data = ", textFn, ".call(", deferredAlias, ");\n");
+                body.push(deferredAlias, ".data = ", textFn, ".call(", deferredAlias, ") ?? \"\";\n");
                 usedReferenceCount += 1;
             }
         }
@@ -59,7 +59,7 @@ export function codegen(archetype, reference = "fragment", namespace = "_", mayA
                 if (tmpl) {
                     diagnostic(archetype, attr);
                     body.push("const ", attrFn, " = function () {", tmpl.decl, "return(", tmpl.expr, ") };\n");
-                    body.push(deferredAlias, ".setAttribute(", JSON.stringify(attr), "," + attrFn, ".call(", deferredAlias, "));\n");
+                    body.push(deferredAlias, ".setAttribute(", JSON.stringify(attr), "," + attrFn, ".call(", deferredAlias, ") ?? \"\");\n");
                     usedReferenceCount += 1;
                 }
             }
