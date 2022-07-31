@@ -50,7 +50,7 @@ function noDiagnostics(archetype: Node, attr?: string) {}
 			const tmpl = stringCodegen(archetype.data, textFn + "_");
 			if(tmpl) {
 				diagnostic(archetype);
-				body.push(tmpl.decl, "const ", textFn, " = function () { return(", tmpl.expr, ") };\n");
+				body.push("const ", textFn, " = function () {", tmpl.decl, "return(", tmpl.expr, ") };\n");
 				body.push(deferredAlias, ".data = ", textFn, ".call(", deferredAlias, ");\n");
 				usedReferenceCount += 1;
 			}
@@ -63,7 +63,7 @@ function noDiagnostics(archetype: Node, attr?: string) {}
 				const tmpl = stringCodegen(archetype.getAttribute(attr)!, attrFn + "_");
 				if(tmpl) {
 					diagnostic(archetype, attr);
-					body.push(tmpl.decl, "const ", attrFn, " = function () { return(", tmpl.expr, ") };\n");
+					body.push("const ", attrFn, " = function () {", tmpl.decl, "return(", tmpl.expr, ") };\n");
 					body.push(deferredAlias, ".setAttribute(", JSON.stringify(attr), "," + attrFn, ".call(", deferredAlias, "));\n");
 					usedReferenceCount += 1;
 				}
