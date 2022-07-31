@@ -22,16 +22,14 @@ export function install(closure?: { [key: string]: unknown }) {
 				constructor() {
 					super();
 					const shadowRoot = this.attachShadow({mode: 'open'});
-					const content = templateContent.cloneNode(true) as DocumentFragment;
-					this.apply(content);
-					shadowRoot.replaceChildren(content);
+					shadowRoot.replaceChildren(templateContent.cloneNode(true));
+					this.apply(shadowRoot, this);
 				}
 
-				static data1: unknown[] = [];
-				apply(_component: Node): void {};
+				apply(shadowRoot: Node, component: this): void {};
 				static {
 					try {
-						const apply = compile(templateContent, "content", undefined, closure);
+						const apply = compile(templateContent, "content", ["content", "component"], closure);
 						if(apply) Object.defineProperty(this.prototype, "apply", {
 							configurable: true,
 							enumerable: false,
@@ -40,7 +38,7 @@ export function install(closure?: { [key: string]: unknown }) {
 						});
 					}
 					catch(e) {
-						const diagnostics = diagnose(templateContent, "content", undefined, closure);
+						const diagnostics = diagnose(templateContent, "content", ["content", "component"], closure);
 						if(!diagnostics || diagnostics.length === 0) throw e;
 						for(const diagnostic of diagnostics) {
 							if(diagnostic.kind === "engine") {
