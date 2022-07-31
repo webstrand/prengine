@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"isolatedModules": false,
+		"moduleResolution": "node",
+		"noEmit": true,
+		"types": ["jest"],
+		"jsx": "react-jsx",
+		"jsxImportSource": "jsx"
+	},
+	"exclude": [],
+	"extends": "./tsconfig.json",
+	"include": [ "src/**/*.spec.tsx", "src/**/*.spec.mts"]
+}

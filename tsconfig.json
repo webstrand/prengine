@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"incremental": true,
+		"target": "ESNext",
+		"useDefineForClassFields": true,
+		"module": "ESNext",
+		"types": [],
+		"stripInternal": true,
+		"isolatedModules": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"useUnknownInCatchVariables": true,
+		"exactOptionalPropertyTypes": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+		"noPropertyAccessFromIndexSignature": true
+	},
+	"references": [
+		{ "path": "tsconfig.spec.json" },
+		{ "path": "tsconfig.src.json" }
+	],
+	"exclude": ["."]
+}

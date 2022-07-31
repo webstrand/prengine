@@ -1,0 +1,24 @@
+{
+	"author": "webstrand",
+	"description": "",
+	"devDependencies": {
+		"@types/jest": "^28.1.6",
+		"@types/node": "^18.0.6",
+		"jest-environment-jsdom": "^28.1.3",
+		"jest": "^28.1.3",
+		"jsx": "link:jsx",
+		"ts-jest": "^28.0.7",
+		"typescript": "^4.7.4"
+	},
+	"keywords": [],
+	"license": "GPLv3",
+	"pnpm": {
+		"patchedDependencies": {
+			"ts-jest@28.0.7": "patches/ts-jest@28.0.7.patch"
+		}
+	},
+	"scripts": {
+		"test": "jest"
+	},
+	"version": "0.1.0"
+}

@@ -1,0 +1,45 @@
+{
+	"clearMocks": true,
+	"collectCoverage": true,
+	"collectCoverageFrom": [
+		"src/**/*\\.mts",
+		"!src/**/*\\.d\\.mts"
+	],
+	"coverageDirectory": "coverage",
+	"coverageProvider": "v8",
+	"globals": {
+		"ts-jest": {
+			"useESM": true,
+			"tsconfig": "tsconfig.spec.json"
+		}
+	},
+	"moduleFileExtensions": [
+		"js",
+		"mjs",
+		"cjs",
+		"jsx",
+		"cts",
+		"mts",
+		"ts",
+		"tsx",
+		"json",
+		"node"
+	],
+	"moduleNameMapper": {
+		"^(\\.\\.?/.*)\\.mjs$": [
+			"$1.mts",
+			"$0"
+		],
+		"^(\\.\\.?/.*)\\.jsx$": [
+			"$1.tsx",
+			"$0"
+		]
+	},
+	"testEnvironment": "jsdom",
+	"testMatch": [
+		"**/?(*.)+(spec|test).(tsx|mts)"
+	],
+	"transform": {
+		"\\.(tsx?|[mc]ts)$": "ts-jest"
+	}
+}
