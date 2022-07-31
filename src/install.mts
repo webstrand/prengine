@@ -4,43 +4,47 @@ declare global {
 	var prengine: { [key: string]: new () => HTMLElement };
 }
 
-globalThis.prengine ??= {};
-for(const template of document.querySelectorAll<HTMLTemplateElement & { dataset: { component: string } }>("template[data-component]")) {
-	const componentName = template.dataset["component"];
-	const templateName = kebabToSanitizedCamelCase(componentName);
-	const className = camelToPascalCase(templateName);
+export function install(closure?: { [key: string]: unknown }) {
+	if(globalThis.prengine) throw new Error("Cannot reinstall");
 
-	const templateContent = template.content;
+	globalThis.prengine = {};
+	for(const template of document.querySelectorAll<HTMLTemplateElement & { dataset: { component: string } }>("template[data-component]")) {
+		const componentName = template.dataset["component"];
+		const templateName = kebabToSanitizedCamelCase(componentName);
+		const className = camelToPascalCase(templateName);
 
-	globalThis.prengine[className] = ({
-		[className]: class extends HTMLElement {
-			declare shadowRoot: ShadowRoot;
+		const templateContent = template.content;
 
-			constructor() {
-				super();
-				const shadowRoot = this.attachShadow({mode: 'open'});
-				const content = templateContent.cloneNode(true) as DocumentFragment;
-				this.apply(content);
-				shadowRoot.replaceChildren(content);
+		globalThis.prengine[className] = ({
+			[className]: class extends HTMLElement {
+				declare shadowRoot: ShadowRoot;
+
+				constructor() {
+					super();
+					const shadowRoot = this.attachShadow({mode: 'open'});
+					const content = templateContent.cloneNode(true) as DocumentFragment;
+					this.apply(content);
+					shadowRoot.replaceChildren(content);
+				}
+
+				static data1: unknown[] = [];
+				apply(_component: Node): void {};
+				static {
+					const apply = compile(templateContent, "content", undefined, closure);
+					if(apply) Object.defineProperty(this.prototype, "apply", {
+						configurable: true,
+						enumerable: false,
+						writable: true,
+						value: apply
+					});
+				}
+
+				static {
+					customElements.define(componentName, this);
+				}
 			}
-
-			static data1: unknown[] = [];
-			apply(_component: Node): void {};
-			static {
-				const apply = compile(templateContent, "content");
-				if(apply) Object.defineProperty(this.prototype, "apply", {
-					configurable: true,
-					enumerable: false,
-					writable: true,
-					value: apply
-				});
-			}
-
-			static {
-				customElements.define(componentName, this);
-			}
-		}
-	})[className]!;
+		})[className]!;
+	}
 }
 
 export function kebabToSanitizedCamelCase(str: string) {
