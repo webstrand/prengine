@@ -1,4 +1,4 @@
-import { compile } from "./node/compile.mjs";
+import { compile, diagnose } from "./node/compile.mjs";
 export function install(closure) {
     if (globalThis.prengine)
         throw new Error("Cannot reinstall");
@@ -21,14 +21,39 @@ export function install(closure) {
                 apply(_component) { }
                 ;
                 static {
-                    const apply = compile(templateContent, "content", undefined, closure);
-                    if (apply)
-                        Object.defineProperty(this.prototype, "apply", {
-                            configurable: true,
-                            enumerable: false,
-                            writable: true,
-                            value: apply
-                        });
+                    try {
+                        const apply = compile(templateContent, "content", undefined, closure);
+                        if (apply)
+                            Object.defineProperty(this.prototype, "apply", {
+                                configurable: true,
+                                enumerable: false,
+                                writable: true,
+                                value: apply
+                            });
+                    }
+                    catch (e) {
+                        const diagnostics = diagnose(templateContent, "content", undefined, closure);
+                        if (!diagnostics || diagnostics.length === 0)
+                            throw e;
+                        for (const diagnostic of diagnostics) {
+                            if (diagnostic.kind === "engine") {
+                                console.error("Failed to compile template " + componentName + " due to fatal engine error");
+                                throw diagnostic.error;
+                            }
+                            else if (diagnostic.kind === "attr") {
+                                console.error("Failed to compile template " + componentName + " due to error in " + diagnostic.selector + " attribute " + diagnostic.attr);
+                                globalThis.prengine.error = diagnostic.element;
+                                console.error("Offending Element saved to `globalThis.prengine.error`");
+                                throw diagnostic.error;
+                            }
+                            else {
+                                console.error("Failed to compile template " + componentName + " due to error in " + diagnostic.selector);
+                                globalThis.prengine.error = diagnostic.characterData;
+                                console.error("Offending CharacterData saved to `globalThis.prengine.error`");
+                                throw diagnostic.error;
+                            }
+                        }
+                    }
                 }
                 static {
                     customElements.define(componentName, this);

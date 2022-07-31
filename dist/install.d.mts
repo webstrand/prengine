@@ -1,6 +1,8 @@
 declare global {
     var prengine: {
         [key: string]: new () => HTMLElement;
+    } & {
+        error?: Node;
     };
 }
 export declare function install(closure?: {
