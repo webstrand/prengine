@@ -17,11 +17,12 @@ function noDiagnostics(archetype: Node, attr?: string) {}
  * @returns ECMAScript
  */
  export function codegen(archetype: Node, reference: string = "fragment", namespace: string = "_", mayAlias: boolean = false, diagnostic: (...args: [archetype: CharacterData, attr?: undefined] | [archetype: Element, attr: string]) => void = noDiagnostics): string | null {
-	const body = visitNode(archetype, reference, mayAlias, namespace, 0);
+	let k = 0;
+	const body = visitNode(archetype, reference, mayAlias, namespace);
 	return body && body.join("");
 
 	type DeferredString = string | { toString(): string };
-	function visitNode(archetype: Node, reference: DeferredString, mayAlias: boolean, prefix: string, depth: number): DeferredString[] | null {
+	function visitNode(archetype: Node, reference: DeferredString, mayAlias: boolean, prefix: string): DeferredString[] | null {
 		/**
 		 * Count of the number of time the {@link reference} is used in the
 		 * compiled output. We use this value both to determine if anything was
@@ -75,7 +76,7 @@ function noDiagnostics(archetype: Node, attr?: string) {}
 			const childNodes = archetype.childNodes;
 			for(let i = 0; i < childNodes.length; i++) {
 				const childNodeName = { i, toString() { return deferredAlias + ".childNodes[" + this.i + "]" } };
-				const op = visitNode(childNodes[i]!, childNodeName, true, namespace + "child" + i + "of" + depth, depth + 1);
+				const op = visitNode(childNodes[i]!, childNodeName, true, namespace + "child" + i + "_" + k++);
 				if(op) {
 					body.push(...op);
 					usedReferenceCount += 1;
