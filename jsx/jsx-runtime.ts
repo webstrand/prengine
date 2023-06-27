@@ -31,10 +31,13 @@ declare global {
 		type ChildElement = string | number | boolean | symbol | bigint | null | undefined | { toString(): string } | (() => ChildElements) | Node;
 		type ChildElements = ChildElement | Iterable<ChildElement>;
 
+		type RefLike<T> = { current?: T } | ((current: T) => void);
+
 		interface HTMLAttributes<T> {
 			id?: string;
 			class?: string;
 			children?: ChildElements;
+			ref?: RefLike<T>
 		}
 
 		interface HTMLImageAttributes<T extends HTMLImageElement> extends HTMLAttributes<T> {
@@ -58,6 +61,7 @@ declare global {
 		}
 
 		interface IntrinsicAttributes {
+			ref?: RefLike<Element>;
 		}
 
 		// Special attributes only for class components
@@ -92,10 +96,10 @@ function expandChildren(children: JSX.ChildElements): (string | Node)[] {
 			}
 		case "undefined":
 			return [];
-		case "number":
-		case "boolean":
-		case "symbol":
-		case "bigint":
+		//case "number":
+		//case "boolean":
+		//case "symbol":
+		//case "bigint":
 	}
 	return [String(children)]
 }
@@ -108,16 +112,43 @@ function jsx<T extends keyof JSX.IntrinsicElements, Attrs extends JSX.IntrinsicE
 			fragment.append(...expandChildren(attrs.children));
 			return fragment;
 		}
-		else return tag(attrs);
+		else {
+			const result = tag(attrs);
+			const ref = attrs.ref;
+			switch(typeof ref) {
+				case "function":
+					ref(result as never);
+					break;
+				case "object":
+					ref.current = result as never;
+					break;
+			}
+
+			return result;
+		}
 	}
 
 	const element = document.createElement(tag);
 	for(const attr in attrs) {
-		if(attr === "children") continue;
-		element.setAttribute(attr, attrs[attr] as any);
+		switch(attr) {
+			case "children":
+			case "ref":
+				continue;
+		}
+		element.setAttribute(attr, attrs[attr] as never);
 	}
 
 	element.append(...expandChildren(attrs.children));
+
+	const ref = attrs.ref;
+	switch(typeof ref) {
+		case "function":
+			ref(element as never);
+			break;
+		case "object":
+			ref.current = element as never;
+			break;
+	}
 
 	return element;
 }
