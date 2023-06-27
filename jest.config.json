@@ -7,12 +7,6 @@
 	],
 	"coverageDirectory": "coverage",
 	"coverageProvider": "v8",
-	"globals": {
-		"ts-jest": {
-			"useESM": true,
-			"tsconfig": "tsconfig.spec.json"
-		}
-	},
 	"moduleFileExtensions": [
 		"js",
 		"mjs",
@@ -40,6 +34,9 @@
 		"**/?(*.)+(spec|test).(tsx|mts)"
 	],
 	"transform": {
-		"\\.(tsx?|[mc]ts)$": "ts-jest"
+		"\\.(tsx?|[mc]ts)$": ["ts-jest", {
+			"useESM": true,
+			"tsconfig": "tsconfig.spec.json"
+		}]
 	}
 }

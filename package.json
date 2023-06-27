@@ -12,13 +12,9 @@
 	},
 	"keywords": [],
 	"license": "GPLv3",
-	"pnpm": {
-		"patchedDependencies": {
-			"ts-jest@28.0.7": "patches/ts-jest@28.0.7.patch"
-		}
-	},
 	"scripts": {
-		"test": "jest"
+		"test": "jest",
+		"build": "tsc"
 	},
 	"version": "0.1.0"
 }
